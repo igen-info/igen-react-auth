@@ -1,25 +1,30 @@
 {
-    "name": "@igen/react-auth",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "packageManager": "pnpm@10.20.0",
-    "devDependencies": {
-        "@eslint/js": "^9.39.1",
-        "eslint": "^9.39.1",
-        "eslint-plugin-react": "^7.37.5",
-        "globals": "^16.5.0",
-        "typescript": "^5.9.3",
-        "typescript-eslint": "^8.48.0"
-    },
-    "dependencies": {
-        "keycloak-js": "^26.2.1",
-        "react": "^19.2.0"
-    }
+  "name": "@igen/react-auth",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.20.0",
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.7",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.6.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.0"
+  },
+  "dependencies": {
+    "keycloak-js": "^26.2.1",
+    "react": "^19.2.0"
+  }
 }
