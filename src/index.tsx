@@ -57,8 +57,15 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, keycloak, config
         let isCancelled = false;
         let refreshIntervalId: number | undefined;
 
-        keycloakClient
-            .init(resolvedInitOptions)
+        const clientWithMemoizedInit = keycloakClient as Keycloak & {
+            __initPromise?: Promise<boolean>;
+        };
+
+        if (!clientWithMemoizedInit.__initPromise) {
+            clientWithMemoizedInit.__initPromise = clientWithMemoizedInit.init(resolvedInitOptions);
+        }
+
+        clientWithMemoizedInit.__initPromise
             .then((auth: boolean) => {
                 if (isCancelled) return;
 
@@ -66,9 +73,18 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, keycloak, config
                 setToken(keycloakClient.token ?? undefined);
                 setInitialized(true);
 
+                keycloakClient.onAuthSuccess = (): void => {
+                    setAuthenticated(true);
+                    setToken(keycloakClient.token ?? undefined);
+                };
+
                 keycloakClient.onAuthLogout = (): void => {
                     setAuthenticated(false);
                     setToken(undefined);
+                };
+
+                keycloakClient.onAuthRefreshSuccess = (): void => {
+                    setToken(keycloakClient.token ?? undefined);
                 };
 
                 keycloakClient.onTokenExpired = (): void => {

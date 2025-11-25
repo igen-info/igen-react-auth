@@ -72,3 +72,11 @@ If you enable silent SSO (default), host `silent-check-sso.html` at `/silent-che
 
 - Lint: `pnpm exec eslint .`
 - Git hook: Husky pre-commit runs ESLint automatically.
+
+## Demo app
+
+A minimal Vite demo is included under `demo/` to exercise the provider.
+
+- Update `demo/src/main.tsx` with your Keycloak `url`, `realm`, and `clientId`.
+- Ensure `demo/public/silent-check-sso.html` is hosted (default when running dev/preview).
+- Run `pnpm dev:demo` and open the shown URL, or build with `pnpm build:demo` and preview with `pnpm preview:demo`.

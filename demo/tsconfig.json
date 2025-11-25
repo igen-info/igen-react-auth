@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "jsx": "react-jsx",
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": false,
+        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
+        "strict": false,
+        "baseUrl": ".",
+        "paths": {
+            "@auth": ["../src/index.tsx"],
+            "@auth/*": ["../src/*"]
+        },
+        "types": ["vite/client"]
+    },
+    "include": ["src"],
+    "references": [{ "path": "../tsconfig.json" }]
+}
