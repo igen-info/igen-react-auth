@@ -1,6 +1,6 @@
 {
     "name": "@igen/react-auth",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "",
     "type": "module",
     "main": "./dist/index.js",
@@ -15,7 +15,7 @@
     "scripts": {
         "build": "tsc -p tsconfig.json",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prepare": "pnpm run build && husky",
+        "prepare": "npm run build",
         "dev:demo": "vite --config demo/vite.config.ts",
         "build:demo": "vite build --config demo/vite.config.ts",
         "preview:demo": "vite preview --config demo/vite.config.ts"
