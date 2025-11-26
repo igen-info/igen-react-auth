@@ -3,10 +3,19 @@
     "version": "1.0.0",
     "description": "",
     "type": "module",
-    "main": "index.js",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "default": "./dist/index.js"
+        }
+    },
     "scripts": {
+        "build": "tsc -p tsconfig.json",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "prepare": "husky",
+        "prepare": "pnpm run build && husky",
         "dev:demo": "vite --config demo/vite.config.ts",
         "build:demo": "vite build --config demo/vite.config.ts",
         "preview:demo": "vite preview --config demo/vite.config.ts"
@@ -14,6 +23,11 @@
     "keywords": [],
     "author": "",
     "license": "ISC",
+    "files": [
+        "dist",
+        "package.json",
+        "README.md"
+    ],
     "packageManager": "pnpm@10.20.0",
     "devDependencies": {
         "@eslint/js": "^9.39.1",
