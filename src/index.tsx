@@ -1,10 +1,12 @@
-import { type FC, type ReactNode, createContext, useContext, useEffect, useMemo, useState } from 'react';
 import Keycloak, { type KeycloakConfig, type KeycloakInitOptions } from 'keycloak-js';
+import { type FC, type ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 export type AuthContextValue = {
     initialized: boolean;
     authenticated: boolean;
     token: string | undefined;
+    keycloak: Keycloak | undefined;
+    error: Error | undefined;
     login: () => void;
     logout: () => void;
 };
@@ -29,6 +31,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, keycloak, config
     const [initialized, setInitialized] = useState(false);
     const [authenticated, setAuthenticated] = useState(false);
     const [token, setToken] = useState<string | undefined>(undefined);
+    const [error, setError] = useState<Error | undefined>(undefined);
 
     const keycloakClient = useMemo(() => {
         if (keycloak) return keycloak;
@@ -57,38 +60,38 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, keycloak, config
         let isCancelled = false;
         let refreshIntervalId: number | undefined;
 
-        const clientWithMemoizedInit = keycloakClient as Keycloak & {
+        const client = keycloakClient as Keycloak & {
             __initPromise?: Promise<boolean>;
         };
 
-        if (!clientWithMemoizedInit.__initPromise) {
-            clientWithMemoizedInit.__initPromise = clientWithMemoizedInit.init(resolvedInitOptions);
+        if (!client.__initPromise) {
+            client.__initPromise = client.init(resolvedInitOptions);
         }
 
-        clientWithMemoizedInit.__initPromise
+        client.__initPromise
             .then((auth: boolean) => {
                 if (isCancelled) return;
 
-                setAuthenticated(Boolean(auth));
-                setToken(keycloakClient.token ?? undefined);
+                setAuthenticated(auth);
+                setToken(client.token ?? undefined);
                 setInitialized(true);
 
-                keycloakClient.onAuthSuccess = (): void => {
+                client.onAuthSuccess = (): void => {
                     setAuthenticated(true);
-                    setToken(keycloakClient.token ?? undefined);
+                    setToken(client.token ?? undefined);
                 };
 
-                keycloakClient.onAuthLogout = (): void => {
+                client.onAuthLogout = (): void => {
                     setAuthenticated(false);
                     setToken(undefined);
                 };
 
-                keycloakClient.onAuthRefreshSuccess = (): void => {
-                    setToken(keycloakClient.token ?? undefined);
+                client.onAuthRefreshSuccess = (): void => {
+                    setToken(client.token ?? undefined);
                 };
 
-                keycloakClient.onTokenExpired = (): void => {
-                    void keycloakClient.updateToken(30).catch((err) => {
+                client.onTokenExpired = (): void => {
+                    void client.updateToken(30).catch((err) => {
                         console.error('Failed to refresh token after expiration', err);
                         setAuthenticated(false);
                         setToken(undefined);
@@ -96,11 +99,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, keycloak, config
                 };
 
                 refreshIntervalId = window.setInterval((): void => {
-                    void keycloakClient
+                    void client
                         .updateToken(60)
                         .then((refreshed: boolean) => {
                             if (refreshed && !isCancelled) {
-                                setToken(keycloakClient.token ?? undefined);
+                                setToken(client.token ?? undefined);
                             }
                         })
                         .catch((err) => {
@@ -111,6 +114,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, keycloak, config
             .catch((err) => {
                 console.error('Keycloak init error', err);
                 if (!isCancelled) {
+                    setError(err instanceof Error ? err : new Error('Keycloak failed to initialize'));
                     setInitialized(true);
                     setAuthenticated(false);
                 }
@@ -124,20 +128,32 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, keycloak, config
         };
     }, [keycloakClient, refreshIntervalSeconds, resolvedInitOptions]);
 
-    const login = (): void => {
+    const login = useCallback((): void => {
         void keycloakClient.login();
-    };
+    }, [keycloakClient]);
 
-    const logout = (): void => {
-        const redirectUri = typeof window !== 'undefined' ? window.location.origin : undefined;
-        if (redirectUri !== undefined) {
-            void keycloakClient.logout({ redirectUri });
-            return;
+    const logout = useCallback((): void => {
+        if (typeof window !== 'undefined') {
+            void keycloakClient.logout({ redirectUri: window.location.origin });
+        } else {
+            void keycloakClient.logout();
         }
-        void keycloakClient.logout();
-    };
+    }, [keycloakClient]);
 
-    return <AuthContext.Provider value={{ initialized, authenticated, token, login, logout }}>{children}</AuthContext.Provider>;
+    const value = useMemo(
+        () => ({
+            initialized,
+            authenticated,
+            token,
+            keycloak: keycloakClient,
+            error,
+            login,
+            logout,
+        }),
+        [initialized, authenticated, token, keycloakClient, error, login, logout],
+    );
+
+    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextValue => {
