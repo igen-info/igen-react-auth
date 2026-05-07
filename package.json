@@ -1,7 +1,7 @@
 {
     "name": "@igen/auth",
-    "version": "1.1.0",
-    "description": "",
+    "version": "1.2.0",
+    "description": "IGEN Keycloak auth client",
     "type": "module",
     "main": "./dist/index.js",
     "types": "./dist/index.d.ts",
