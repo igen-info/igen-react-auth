@@ -35,12 +35,14 @@ Common commands:
 pnpm install
 pnpm exec eslint .
 pnpm build
+pnpm test
+pnpm typecheck:test
 pnpm dev:demo
 pnpm build:demo
 pnpm preview:demo
 ```
 
-Do not run `pnpm test` as a validation command unless tests have been added. At present, the `test` script is a placeholder that exits with an error.
+`pnpm test` runs the Vitest suite. `pnpm typecheck:test` type-checks test files without emitting build output.
 
 ## TypeScript and React rules
 
@@ -80,6 +82,8 @@ For normal source changes, run at least:
 ```bash
 pnpm exec eslint .
 pnpm build
+pnpm test
+pnpm typecheck:test
 ```
 
 For changes affecting browser behavior or the demo, also run:

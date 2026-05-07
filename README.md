@@ -134,6 +134,8 @@ If you enable silent SSO, host `silent-check-sso.html` at `/silent-check-sso.htm
 ## Tooling
 
 - Lint: `pnpm exec eslint .`
+- Test: `pnpm test`
+- Test typecheck: `pnpm typecheck:test`
 - Git hook: Husky pre-commit runs ESLint automatically.
 
 ## Demo app

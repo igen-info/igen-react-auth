@@ -6,7 +6,7 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
     {
-        ignores: ['dist/**'],
+        ignores: ['dist/**', 'demo/dist/**'],
     },
     {
         files: ['src/**/*.{js,mjs,cjs}'],
@@ -46,6 +46,21 @@ export default defineConfig([
             '@typescript-eslint/strict-boolean-expressions': ['error', { allowString: false, allowNumber: false }],
             '@typescript-eslint/explicit-function-return-type': 'error',
             'react/react-in-jsx-scope': 'off',
+        },
+    },
+    {
+        files: ['tests/**/*.ts'],
+        extends: tseslint.configs.recommendedTypeChecked,
+        languageOptions: {
+            globals: globals.node,
+            parserOptions: {
+                project: './tsconfig.test.json',
+            },
+        },
+        rules: {
+            semi: ['error', 'always'],
+            '@typescript-eslint/strict-boolean-expressions': ['error', { allowString: false, allowNumber: false }],
+            '@typescript-eslint/explicit-function-return-type': 'error',
         },
     },
 ]);
