@@ -12,10 +12,12 @@ Maintain the public behavior of `@igen/auth` unless the task explicitly asks for
 Expected public API:
 
 - `createKeycloakClient(config)` returns a Keycloak client instance.
+- `createAuthClient(options)` is the React-free lifecycle API exported from `@igen/auth/core`.
 - `AuthProvider` accepts exactly one of `keycloak` or `config`.
 - `AuthProvider` may accept `initOptions` and `refreshIntervalSeconds`.
-- `useAuth()` returns initialized/authenticated state, the current token, and login/logout functions.
+- `useAuth()` returns initialized/authenticated state, the current token, keycloak, error, and login/logout functions.
 - `useAuth()` must fail clearly when used outside the provider.
+- `@igen/auth` remains a backwards-compatible React entrypoint; `@igen/auth/react` is the explicit React entrypoint; `@igen/auth/core` must stay React-free.
 
 ## Security constraints
 
@@ -33,6 +35,7 @@ When editing initialization:
 3. Guard browser-only values such as `window.location.origin` so imports do not fail in non-browser build contexts.
 4. Ensure initialization state is set deterministically on success and failure.
 5. Avoid double initialization during React render; initialize in effects or controlled setup paths.
+6. Account for React 19 StrictMode effect setup/cleanup replay in development. Cleanup may run before an in-flight `keycloak.init()` resolves; reusing an init promise must still allow state updates on the second setup pass.
 
 ## Refresh behavior
 
