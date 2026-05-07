@@ -5,14 +5,14 @@ Small utilities to bootstrap Keycloak authentication in React apps.
 ## Installation
 
 ```bash
-pnpm add @igen/react-auth keycloak-js react
+pnpm add @igen/auth keycloak-js react
 ```
 
 ## Usage
 
 ```tsx
 // keycloak.ts
-import { createKeycloakClient } from '@igen/react-auth';
+import { createKeycloakClient } from '@igen/auth';
 
 export const keycloak = createKeycloakClient({
     url: 'https://your-keycloak.com',
@@ -23,7 +23,7 @@ export const keycloak = createKeycloakClient({
 
 ```tsx
 // app entry
-import { AuthProvider, useAuth } from '@igen/react-auth';
+import { AuthProvider, useAuth } from '@igen/auth';
 import { keycloak } from './keycloak';
 
 export const App = () => (
@@ -49,10 +49,10 @@ const Routes = () => {
 
 ### `AuthProvider` props
 
--   `keycloak` (optional): an existing `Keycloak` instance.
--   `config` (optional): `KeycloakConfig` used to create a client when `keycloak` is not provided.
--   `initOptions` (optional): overrides defaults (`login-required`, `S256`, silent SSO URL when available).
--   `refreshIntervalSeconds` (optional): how often to call `updateToken`; default `30`.
+- `keycloak` (optional): an existing `Keycloak` instance.
+- `config` (optional): `KeycloakConfig` used to create a client when `keycloak` is not provided.
+- `initOptions` (optional): overrides defaults (`login-required`, `S256`, silent SSO URL when available).
+- `refreshIntervalSeconds` (optional): how often to call `updateToken`; default `30`.
 
 Exactly one of `keycloak` or `config` is required.
 
