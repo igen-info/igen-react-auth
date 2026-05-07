@@ -1,5 +1,8 @@
 import Keycloak, { type KeycloakConfig, type KeycloakInitOptions } from 'keycloak-js';
 import { type FC, type ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createKeycloakClient } from './core.js';
+
+export * from './core.js';
 
 export type AuthContextValue = {
     initialized: boolean;
@@ -24,8 +27,6 @@ type AuthProviderProps = {
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-export const createKeycloakClient = (config: KeycloakConfig): Keycloak => new Keycloak(config);
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children, keycloak, config, initOptions, refreshIntervalSeconds = 30 }) => {
     const [initialized, setInitialized] = useState(false);

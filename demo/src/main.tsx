@@ -1,6 +1,6 @@
 import { StrictMode, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AuthProvider, createKeycloakClient, useAuth } from '../../src/index';
+import { AuthProvider, createKeycloakClient, getFullName, getUsername, useAuth } from '../../src/index';
 
 const validConfig = {
     url: 'https://auth.igen.local/auth',
@@ -42,8 +42,8 @@ const Demo = ({ onSimulateError }: { onSimulateError: () => void }) => {
         );
     }
 
-    const username = (keycloak?.tokenParsed as any)?.preferred_username || 'Guest';
-    const fullName = (keycloak?.tokenParsed as any)?.name;
+    const username = getUsername(keycloak) || 'Guest';
+    const fullName = getFullName(keycloak);
 
     return (
         <div style={styles.container}>
@@ -250,7 +250,6 @@ const styles = {
     },
 };
 
-// Adiciona animação de spin via JS para não precisar de arquivo CSS extra
 if (typeof document !== 'undefined') {
     const style = document.createElement('style');
     style.innerHTML = `@keyframes spin { to { transform: rotate(360deg); } }`;
